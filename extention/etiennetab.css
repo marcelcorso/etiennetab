@@ -1,0 +1,9 @@
+body {
+  padding: 0px;
+  margin: 0px;
+}
+
+video {
+    display: block; 
+    width: 100%;
+}

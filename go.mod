@@ -11,5 +11,6 @@ require (
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/onrik/logrus v0.3.0
 	github.com/pkg/errors v0.8.1
+	github.com/rs/cors v1.6.0
 	github.com/sirupsen/logrus v1.4.2
 )

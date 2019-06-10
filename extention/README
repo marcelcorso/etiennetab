@@ -1,0 +1,11 @@
+INSTALL
+
+1) Download TODO 
+2) Extract into somewhere like ~/Documents/etiennetab
+3) Open Chrome
+4) Open the menu and find "More Tools" > "Extensions", click
+5) Be sure to enable "developer mode"
+6) Click on the "Load Unpacked" extension
+7) Select the direcotry you extrated newtab (~/Documents/etiennetab) 
+8) Enable
+9) Profit

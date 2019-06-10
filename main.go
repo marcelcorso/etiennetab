@@ -11,6 +11,7 @@ import (
 	"github.com/dghubble/oauth1"
 	"github.com/onrik/logrus/filename"
 	"github.com/pkg/errors"
+	"github.com/rs/cors"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -36,7 +37,9 @@ func main() {
 
 	client := twitter.NewClient(httpClient)
 
-	http.HandleFunc("/gifs.json", func(w http.ResponseWriter, r *http.Request) {
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("/gifs.json", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
 		if _, err := os.Stat("/tmp/gifs.json"); err == nil {
@@ -100,6 +103,8 @@ func main() {
 		}
 	}()
 
+	handler := cors.Default().Handler(mux)
+
 	log.Debugf("listening for http on :%s", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	log.Fatal(http.ListenAndServe(":"+port, handler))
 }
