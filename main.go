@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
 	"os"
 
@@ -28,18 +29,34 @@ func main() {
 	log.SetLevel(logLevel)
 	log.AddHook(filename.NewHook())
 
+	config := oauth1.NewConfig(consumerKey, consumerSecret)
+	token := oauth1.NewToken(accessToken, accessTokenSecret)
+	httpClient := config.Client(oauth1.NoContext, token)
+
+	client := twitter.NewClient(httpClient)
+
 	http.HandleFunc("/gifs.json", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
 
-		config := oauth1.NewConfig(consumerKey, consumerSecret)
-		token := oauth1.NewToken(accessToken, accessTokenSecret)
-		httpClient := config.Client(oauth1.NoContext, token)
-
-		// twitter client
-		client := twitter.NewClient(httpClient)
+		if _, err := os.Stat("/tmp/gifs.json"); err == nil {
+			f, err := os.Open("/tmp/gifs.json")
+			if err != nil {
+				errors.Wrap(err, "err opening cache")
+				log.Errorf("%v", err)
+				return
+			}
+			_, err = io.Copy(w, f)
+			if err != nil {
+				errors.Wrap(err, "err copying from cache to response writer")
+				log.Errorf("%v", err)
+				return
+			}
+			return
+		}
 
 		tweets, _, err := client.Timelines.UserTimeline(&twitter.UserTimelineParams{
 			ScreenName: "etiennejcb",
-			Count:      5,
+			Count:      100,
 		})
 
 		if err != nil {
@@ -49,7 +66,6 @@ func main() {
 		}
 
 		var gifs []string
-		log.Debug("gonna range tweets")
 		for _, t := range tweets {
 			if t.ExtendedEntities != nil {
 				for _, me := range t.ExtendedEntities.Media {
@@ -63,8 +79,16 @@ func main() {
 			}
 		}
 
-		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(gifs)
+
+		// cache
+		f, err := os.Create("/tmp/gifs.json")
+		if err != nil {
+			errors.Wrap(err, "err opening cache")
+			log.Errorf("%v", err)
+			return
+		}
+		json.NewEncoder(f).Encode(gifs)
 	})
 
 	log.Debugf("listening for http on :%s", port)
