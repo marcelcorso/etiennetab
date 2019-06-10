@@ -95,7 +95,7 @@ func main() {
 	// clear cache
 	ticker := time.NewTicker(6 * time.Hour)
 	go func() {
-		for t := range ticker.C {
+		for range ticker.C {
 			os.Remove("/tmp/gifs.json")
 		}
 	}()
