@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
@@ -56,7 +57,7 @@ func main() {
 
 		tweets, _, err := client.Timelines.UserTimeline(&twitter.UserTimelineParams{
 			ScreenName: "etiennejcb",
-			Count:      100,
+			Count:      500,
 		})
 
 		if err != nil {
@@ -90,6 +91,14 @@ func main() {
 		}
 		json.NewEncoder(f).Encode(gifs)
 	})
+
+	// clear cache
+	ticker := time.NewTicker(6 * time.Hour)
+	go func() {
+		for t := range ticker.C {
+			os.Remove("/tmp/gifs.json")
+		}
+	}()
 
 	log.Debugf("listening for http on :%s", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
