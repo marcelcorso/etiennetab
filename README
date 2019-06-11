@@ -1,0 +1,22 @@
+INSTALL
+
+1) Download https://github.com/marcelcorso/etiennetab/archive/master.zip 
+2) Extract into somewhere like ~/Documents/etiennetab
+3) Open Chrome
+4) Open the menu and find "More Tools" > "Extensions", click
+5) Be sure to enable "developer mode"
+6) Click on the "Load Unpacked" extension
+7) Select the "extension" direcotry inside the one you extrated (~/Documents/etiennetab/extension/) 
+8) Enable
+9) Profit
+
+
+HOW DOES IT WORK?
+
+The extension loads a simple html, js and css into a new page when you open a new tab
+The javascript does an ajax request to https://https://etiennetab.herokuapp.com/gifs.json
+On the server side we request twitter for @etiennejcb tweets
+We get the ones that have a video and put on a list
+We write that list into /tmp/gifs.json for caching future requests. (cache gets busted every 6h)
+Back on the javascript client we randomly select a gif from the list returned by the server
+Update a <video> tag with it and play it full screen 
