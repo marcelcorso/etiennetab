@@ -20,3 +20,9 @@ We get the ones that have a video and put on a list
 We write that list into /tmp/gifs.json for caching future requests. (cache gets busted every 6h)
 Back on the javascript client we randomly select a gif from the list returned by the server
 Update a <video> tag with it and play it full screen 
+
+
+
+
+merci Étienne!
+https://twitter.com/etiennejcb/
