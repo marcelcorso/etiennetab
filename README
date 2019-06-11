@@ -14,8 +14,8 @@ INSTALL
 HOW DOES IT WORK?
 
 The extension loads a simple html, js and css into a new page when you open a new tab
-The javascript does an ajax request to https://https://etiennetab.herokuapp.com/gifs.json
-On the server side we request twitter for @etiennejcb tweets
+The javascript does an ajax request to https://etiennetab.herokuapp.com/gifs.json
+On the server side (hosted for free on heroku) we request twitter for @etiennejcb tweets
 We get the ones that have a video and put on a list
 We write that list into /tmp/gifs.json for caching future requests. (cache gets busted every 6h)
 Back on the javascript client we randomly select a gif from the list returned by the server
