@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/dghubble/go-twitter/twitter"
@@ -14,6 +15,34 @@ import (
 	"github.com/rs/cors"
 	log "github.com/sirupsen/logrus"
 )
+
+func worker(handle string, client *twitter.Client, wg *sync.WaitGroup, gifs chan string) {
+	defer wg.Done()
+
+	tweets, _, err := client.Timelines.UserTimeline(&twitter.UserTimelineParams{
+		ScreenName: handle,
+		Count:      500,
+	})
+
+	if err != nil {
+		errors.Wrap(err, "err requesting timeline")
+		log.Errorf("%v", err)
+		return
+	}
+
+	for _, t := range tweets {
+		if t.ExtendedEntities != nil {
+			for _, me := range t.ExtendedEntities.Media {
+
+				if (me.Type == "animated_gif") &&
+					(len(me.VideoInfo.Variants) > 0) {
+
+					gifs <- me.VideoInfo.Variants[0].URL
+				}
+			}
+		}
+	}
+}
 
 func main() {
 
@@ -58,30 +87,25 @@ func main() {
 			return
 		}
 
-		tweets, _, err := client.Timelines.UserTimeline(&twitter.UserTimelineParams{
-			ScreenName: "etiennejcb",
-			Count:      500,
-		})
+		handles := []string{"etiennejcb", "KangarooPhysics", "jn3008", "satoshi_aizawa"}
 
-		if err != nil {
-			errors.Wrap(err, "err requesting timeline")
-			log.Errorf("%v", err)
-			return
+		gifchan := make(chan string)
+		var wg sync.WaitGroup
+
+		for _, handle := range handles {
+			wg.Add(1)
+			go worker(handle, client, &wg, gifchan)
 		}
 
 		var gifs []string
-		for _, t := range tweets {
-			if t.ExtendedEntities != nil {
-				for _, me := range t.ExtendedEntities.Media {
-
-					if (me.Type == "animated_gif") &&
-						(len(me.VideoInfo.Variants) > 0) {
-
-						gifs = append(gifs, me.VideoInfo.Variants[0].URL)
-					}
-				}
+		go func() {
+			for g := range gifchan {
+				gifs = append(gifs, g)
 			}
-		}
+		}()
+
+		wg.Wait()
+		close(gifchan)
 
 		json.NewEncoder(w).Encode(gifs)
 
