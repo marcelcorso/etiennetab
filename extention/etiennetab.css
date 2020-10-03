@@ -1,9 +1,16 @@
-body {
+html, body {
   padding: 0px;
   margin: 0px;
+  overflow: hidden;
 }
 
 video {
     display: block; 
     width: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%); /* IE 9 */
+    -webkit-transform: translate(-50%, -50%); /* Chrome, Safari, Opera */
 }
