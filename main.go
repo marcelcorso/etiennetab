@@ -55,8 +55,12 @@ func main() {
 
 	logLevel, err := log.ParseLevel(loglvl)
 	if err != nil {
-		log.Fatal(err)
+		log.SetLevel(log.DebugLevel)
+		log.WithFields(log.Fields{"error": err}).Error("cannot parse log level. Setting to DEBUG")
+	} else {
+		log.SetLevel(logLevel)
 	}
+
 	log.SetLevel(logLevel)
 	log.AddHook(filename.NewHook())
 
@@ -68,6 +72,8 @@ func main() {
 
 	mux := http.NewServeMux()
 
+	var expires string
+
 	mux.HandleFunc("/gifs.json", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
@@ -78,6 +84,9 @@ func main() {
 				log.Errorf("%v", err)
 				return
 			}
+
+			w.Header().Set("Expires", expires)
+
 			_, err = io.Copy(w, f)
 			if err != nil {
 				errors.Wrap(err, "err copying from cache to response writer")
@@ -107,6 +116,7 @@ func main() {
 		wg.Wait()
 		close(gifchan)
 
+		w.Header().Set("Expires", expires)
 		json.NewEncoder(w).Encode(gifs)
 
 		// cache
@@ -119,11 +129,15 @@ func main() {
 		json.NewEncoder(f).Encode(gifs)
 	})
 
+	burstCacheEvery := 6 * time.Hour
+	expires = time.Now().Add(burstCacheEvery).Format(http.TimeFormat)
 	// clear cache
-	ticker := time.NewTicker(6 * time.Hour)
+	ticker := time.NewTicker(burstCacheEvery)
 	go func() {
+
 		for range ticker.C {
 			os.Remove("/tmp/gifs.json")
+			expires = time.Now().Add(burstCacheEvery).Format(http.TimeFormat)
 		}
 	}()
 
