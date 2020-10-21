@@ -85,6 +85,7 @@ func main() {
 				return
 			}
 
+			w.Header().Set("Cache-Control", "public")
 			w.Header().Set("Expires", expires)
 
 			_, err = io.Copy(w, f)
@@ -116,6 +117,7 @@ func main() {
 		wg.Wait()
 		close(gifchan)
 
+		w.Header().Set("Cache-Control", "public")
 		w.Header().Set("Expires", expires)
 		json.NewEncoder(w).Encode(gifs)
 
