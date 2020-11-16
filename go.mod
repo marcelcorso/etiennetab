@@ -1,6 +1,6 @@
 module github.com/marcelcorso/etiennetab
 
-go 1.12
+go 1.15
 
 require (
 	github.com/cenkalti/backoff v2.1.1+incompatible // indirect
