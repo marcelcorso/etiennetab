@@ -14,3 +14,31 @@ video {
     -ms-transform: translate(-50%, -50%); /* IE 9 */
     -webkit-transform: translate(-50%, -50%); /* Chrome, Safari, Opera */
 }
+
+a {
+    font-family: "Lucida Console", Monaco, monospace;
+    position: fixed;
+    bottom: 6px;
+    right: 6px;
+    font-size: 12px;
+    opacity: 0;
+    -webkit-transition: opacity 0.3s ease-in-out;
+    -moz-transition: opacity 0.3s ease-in-out;
+    -ms-transition: opacity 0.3s ease-in-out;
+    -o-transition: opacity 0.3s ease-in-out;
+    transition: opacity 0.3 ease-in-out;
+}
+
+a.show {
+  opacity: 1;
+}
+
+a:link, a:visited {
+    color: #555;
+    text-decoration: none;
+}
+
+a:hover, a:active {
+    color: #555;
+    text-decoration: underline;
+}

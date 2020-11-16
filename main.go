@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strconv"
 	"sync"
 	"time"
 
@@ -16,7 +17,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func worker(handle string, client *twitter.Client, wg *sync.WaitGroup, gifs chan string) {
+func worker(handle string, client *twitter.Client, wg *sync.WaitGroup, gifs chan [3]string) {
 	defer wg.Done()
 
 	tweets, _, err := client.Timelines.UserTimeline(&twitter.UserTimelineParams{
@@ -37,7 +38,11 @@ func worker(handle string, client *twitter.Client, wg *sync.WaitGroup, gifs chan
 				if (me.Type == "animated_gif") &&
 					(len(me.VideoInfo.Variants) > 0) {
 
-					gifs <- me.VideoInfo.Variants[0].URL
+					gifs <- [3]string{
+						handle,
+						strconv.FormatInt(t.ID, 10),
+						me.VideoInfo.Variants[0].URL,
+					}
 				}
 			}
 		}
@@ -97,9 +102,9 @@ func main() {
 			return
 		}
 
-		handles := []string{"etiennejcb", "KangarooPhysics", "jn3008", "satoshi_aizawa"}
+		handles := []string{"etiennejcb", "KangarooPhysics", "jn3008", "satoshi_aizawa", "RavenKwok", "nicolasdnl", "kyndinfo", "DirkKoy", "connrbell"}
 
-		gifchan := make(chan string)
+		gifchan := make(chan [3]string)
 		var wg sync.WaitGroup
 
 		for _, handle := range handles {
@@ -107,7 +112,7 @@ func main() {
 			go worker(handle, client, &wg, gifchan)
 		}
 
-		var gifs []string
+		var gifs [][3]string
 		go func() {
 			for g := range gifchan {
 				gifs = append(gifs, g)
