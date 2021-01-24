@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -38,6 +39,12 @@ func worker(handle string, client *twitter.Client, wg *sync.WaitGroup, gifs chan
 				if ((me.Type == "animated_gif") || (me.Type == "video")) &&
 					(len(me.VideoInfo.Variants) > 0) {
 
+					if strings.Contains(me.VideoInfo.Variants[0].URL, ".m3u8") {
+						// TODO dunno how to play this yet. find out
+						// https://stackoverflow.com/questions/19782389/playing-m3u8-files-with-html-video-tag
+						// https://stackoverflow.com/questions/23388135/how-to-play-html5-video-play-m3u8-on-mobile-and-desktop/23388308#23388308
+						continue
+					}
 					gifs <- [3]string{
 						handle,
 						strconv.FormatInt(t.ID, 10),
