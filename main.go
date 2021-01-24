@@ -35,7 +35,7 @@ func worker(handle string, client *twitter.Client, wg *sync.WaitGroup, gifs chan
 		if t.ExtendedEntities != nil {
 			for _, me := range t.ExtendedEntities.Media {
 
-				if (me.Type == "animated_gif") &&
+				if ((me.Type == "animated_gif") || (me.Type == "video")) &&
 					(len(me.VideoInfo.Variants) > 0) {
 
 					gifs <- [3]string{
