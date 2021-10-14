@@ -109,7 +109,7 @@ func main() {
 			return
 		}
 
-		handles := []string{"etiennejcb", "KangarooPhysics", "jn3008", "satoshi_aizawa", "RavenKwok", "nicolasdnl", "kyndinfo", "DirkKoy", "connrbell", "HedronApp", "DirkKoy", "yuruyurau", "Yugemaku", "MAKIO135", "zozuar", "JosefBsharah", "incre_ment", "rustysniper1", "MIRAI_MIZUE", "MacTuitui", "tdhooper", "dansmath", "jagarikin", "cs_kaplan", "any_user", "Mark_Lindner", "tompop99", "cacheflowe", "KeishiroUeki", "Bbbn192", "kimasendorf", "pickover", "TaterGFX", "marioecg", "canvas_51", "lejeunerenard", "ShanzhaiB", "dstern_motion", "AkiyoshiKitaoka", "TatsuyaBot", "BilndArt", "kamoshika_vrc", "davestrickgifs", "voorbeeld", "amandaghassaei", "smangiat", "sjpalmer1994", "beesandbombs", "Yann_LeGall", "kusakarism"}
+		handles := []string{"etiennejcb", "KangarooPhysics", "jn3008", "satoshi_aizawa", "RavenKwok", "nicolasdnl", "kyndinfo", "DirkKoy", "connrbell", "HedronApp", "DirkKoy", "yuruyurau", "Yugemaku", "MAKIO135", "zozuar", "JosefBsharah", "incre_ment", "rustysniper1", "MIRAI_MIZUE", "MacTuitui", "tdhooper", "dansmath", "jagarikin", "cs_kaplan", "any_user", "Mark_Lindner", "tompop99", "cacheflowe", "KeishiroUeki", "Bbbn192", "kimasendorf", "pickover", "TaterGFX", "marioecg", "canvas_51", "lejeunerenard", "ShanzhaiB", "dstern_motion", "AkiyoshiKitaoka", "TatsuyaBot", "BilndArt", "kamoshika_vrc", "davestrickgifs", "voorbeeld", "amandaghassaei", "smangiat", "sjpalmer1994", "beesandbombs", "Yann_LeGall", "kusakarism", "QuentinHocde", "echophons"}
 
 		gifchan := make(chan [3]string)
 		var wg sync.WaitGroup
