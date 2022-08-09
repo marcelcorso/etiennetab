@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"io"
+	"math/rand"
 	"net/http"
 	"os"
 	"strconv"
@@ -141,6 +142,44 @@ func main() {
 			return
 		}
 		json.NewEncoder(f).Encode(gifs)
+	})
+
+	s := rand.NewSource(time.Now().Unix())
+	rn := rand.New(s) // initialize local pseudorandom generator
+	mux.HandleFunc("/one.mp4", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "video/mp4")
+
+		if _, err := os.Stat("/tmp/gifs.json"); err == nil {
+			f, err := os.Open("/tmp/gifs.json")
+			if err != nil {
+				errors.Wrap(err, "err opening cache")
+				log.Errorf("%v", err)
+				return
+			}
+
+			var gifs [][3]string
+			err = json.NewDecoder(f).Decode(gifs)
+
+			// pick a vid
+			o := gifs[rn.Intn(len(gifs))]
+			videoURL := o[2]
+
+			resp, err := http.Get(videoURL)
+			if err != nil {
+				errors.Wrap(err, "error fetching vid from the twitz")
+				log.Errorf("%v", err)
+				return
+			}
+
+			// read from twitter, write to response
+			_, err = io.Copy(w, resp.Body)
+			if err != nil {
+				errors.Wrap(err, "err copying from the twittz to response writer")
+				log.Errorf("%v", err)
+				return
+			}
+			return
+		}
 	})
 
 	burstCacheEvery := 6 * time.Hour
