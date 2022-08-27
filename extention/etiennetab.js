@@ -1,4 +1,4 @@
-var server = window.location.host == "localhost:8000" ? "http://localhost:8080" : "https://etiennetab.marcelcorso.repl.co/";
+var server = window.location.host == "localhost:8000" ? "http://localhost:8080" : "https://etiennetab.marcelcorso.repl.co";
 
 fetch(server + '/gifs.json', {
     method: 'GET',
